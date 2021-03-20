@@ -42,7 +42,8 @@ s_n_influnece[prev_best]=s_n_influnece[prev_best]*0.4+(0)*0.2+degreecentrality[p
 current_seed = max(s_n_influnece, key=s_n_influnece.get) if current_seed == prev_best:
 seeds.append(current_seed) s_n_influnece.pop(current_seed)
 else:
-continu          e return seeds
+continue 
+return seeds
 
 
 #intendation under process
