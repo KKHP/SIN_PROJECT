@@ -1,3 +1,4 @@
+
 def calculate_average(graph, seeds, model): 
     if model == "IC":
         count = 0

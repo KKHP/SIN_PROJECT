@@ -9,10 +9,11 @@ def LTpropmodel(graph, seeds):
             if element not in inf:
                 if threshold[element] == 0: 
                     threshold[element] = random.random()
-                pre_node_record[element] = pre_node_record[element] + graph[node][element]['weight']
+                pre_node_record[element] = pre_node_record[element] + graph[node][element]['weight']//check this line
                 if  pre_node_record[element] >= threshold[element]:
                     inf.append(element) 
                     qu.append(element)
-    noofinfl = len(inf) return noofinfl
+    noofinfl = len(inf) 
+    return noofinfl
 
 # not sure about this function
