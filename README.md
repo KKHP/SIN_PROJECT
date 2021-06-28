@@ -122,9 +122,6 @@ Propagation Models:
 
 1. **IC Model:**
 
-![](RackMultipart20210628-4-1yu6iem_html_7d0fca73b86c268a.png) ![](RackMultipart20210628-4-1yu6iem_html_33400d5907f44a64.png)
-
-![](RackMultipart20210628-4-1yu6iem_html_87ba96af01dcfb9f.png) ![](RackMultipart20210628-4-1yu6iem_html_6693b4e860245731.png)
 
 Algorithm:
 
@@ -143,9 +140,6 @@ Input: graph[v][v],seeds[k]; Output: influnce\_num
 
 1. **LT Model:**
 
-![](RackMultipart20210628-4-1yu6iem_html_15b17801f6bcc45d.png) ![](RackMultipart20210628-4-1yu6iem_html_1d314d3b36563b4.png)
-
-![](RackMultipart20210628-4-1yu6iem_html_91c55855f1e04b12.png) ![](RackMultipart20210628-4-1yu6iem_html_ed46014d2f081342.png)
 
 Algorithm:
 
@@ -170,61 +164,262 @@ Input: graph[v][v],seeds[k],in\_degree[n]; Output: influence\_num
 
 14. return influence\_num
 
-Design Diagram:
 
-![](RackMultipart20210628-4-1yu6iem_html_8dde8741fe37de20.png)
 
 # **5. Project demonstration**
 
 Dataset description
 
 Project Code
+```python
+
+
+
+
+! pip install networkx
+
+from collections import defaultdict
+import random
+import time
+import networkx as nx
+
+def read_data(graph_file): 
+    f1 = open(graph_file, 'r')
+    first_line = f1.readline().split() 
+    novert = int(first_line[0]) 
+    noedge = int(first_line[1]) 
+    graph = defaultdict(dict) 
+    outdeg = defaultdict(int)
+    for line in f1.readlines(): 
+        data = line.split() 
+        outdeg[int(data[0])] += 1 
+        if float(data[2])>0:
+            graph[int(data[0])][int(data[1])] ={'weight': float(data[2])} 
+        elif float(data[2])<0:
+            graph[int(data[0])][int(data[1])] ={'weight': -1*float(data[2])} 
+    return novert, noedge, graph, outdeg
+
+#done
+def ICpropmodel(graph, seeds): 
+    inf = seeds[:]
+    qu = inf[:]
+    while len(qu) != 0: 
+        node = qu.pop(0)
+        for element in graph[node]: 
+            if element not in inf:
+                probility = random.random()
+                if probility <= graph[node][element]['weight']: 
+                    inf.append(element)
+                    qu.append(element) 
+    noofinfl = len(inf) 
+    return noofinfl
+
+def LTpropmodel(graph, seeds): 
+    inf = seeds[:]
+    qu = inf[:]
+    pre_node_record = defaultdict(float)
+    threshold = defaultdict(float)
+    while len(qu) != 0: 
+        node = qu.pop(0)
+        for element in graph[node]: 
+            if element not in inf:
+                if threshold[element] == 0: 
+                    threshold[element] = random.random()
+                pre_node_record[element] = pre_node_record[element] + graph[node][element]['weight'] 
+                if  pre_node_record[element] >= threshold[element]:
+                    inf.append(element) 
+                    qu.append(element)
+    noofinfl = len(inf) 
+    return noofinfl
+
+SN_INFLUENCE_PER = 0.4
+CENTRALITY_PER = 0.4
+def propic(graph, novert, seed_size, outdeg):
+    test_count = 0
+    seeds = []
+    s_n_influnece = defaultdict(float)
+    G=graph
+    if G.is_directed():
+        s = 1.0 / (len(G) - 1.0)
+        degreecentrality = {n: d * s for n, d in G.out_degree()}
+        G = G.reverse()
+    else:
+        s = 1.0 / (len(G) - 1.0)
+        degreecentrality = {n: d * s for n, d in G.degree()}
+    path_length = nx.single_source_shortest_path_length
+    nodes = G.nodes
+    closeness_centrality = {}
+    for n in nodes:
+        sp = dict(path_length(G, n))
+        totsp = sum(sp.values())
+        if totsp > 0.0 and len(G) > 1: 
+            closeness_centrality[n] = (len(sp) - 1.0) / totsp
+            s = (len(sp) - 1.0) / (len(G) - 1)
+            closeness_centrality[n] *= s
+        else:
+            closeness_centrality[n] = 0.0
+    while len(seeds) < seed_size:
+        if len(seeds) == 0:
+            for node in range(1, novert + 1):
+                s_n_influnece[node] = 0
+                if node in outdeg.keys():
+                    s_n_influnece[node] = (s_n_influnece[node] + ICpropmodel(graph, seeds+[node]))/novert
+                    if not closeness_centrality[node]==0:
+                        s_n_influnece[node]=s_n_influnece[node]*SN_INFLUENCE_PER+(1/closeness_centrality[node])*CENTRALITY_PER+degreecentrality[node]*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))
+                    else:
+                        s_n_influnece[node]=s_n_influnece[node]*SN_INFLUENCE_PER+(0)*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))+degreecentrality[node]*CENTRALITY_PER
+            max_seed = max(s_n_influnece, key=s_n_influnece.get)
+            s_n_influnece.pop(max_seed)
+            seeds.append(max_seed) 
+            test_count+=1
+        elif len(seeds)!= 0:
+            prev_best = max(s_n_influnece, key=s_n_influnece.get)
+            s_n_influnece[prev_best] = 0
+            marginal_profit = ICpropmodel(graph, seeds + [prev_best]) - ICpropmodel(graph, seeds)
+            s_n_influnece[prev_best] += marginal_profit
+            if not closeness_centrality[prev_best]==0:
+                s_n_influnece[prev_best]=s_n_influnece[prev_best]*SN_INFLUENCE_PER+(1/closeness_centrality[prev_best])*CENTRALITY_PER+degreecentrality[prev_best]*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))
+            else:
+                s_n_influnece[prev_best]=s_n_influnece[prev_best]*SN_INFLUENCE_PER+(0)*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))+degreecentrality[prev_best]*CENTRALITY_PER
+            current_seed = max(s_n_influnece, key=s_n_influnece.get)
+            if current_seed == prev_best:
+                seeds.append(current_seed)
+                s_n_influnece.pop(current_seed)
+            else:
+                continue
+    return seeds
+
+SN_INFLUENCE_PER = 0.4
+CENTRALITY_PER = 0.4
+def proplt(graph, novert, seed_size, outdeg):
+    seeds = []
+    s_n_influnece = defaultdict(float)
+    G=graph
+    if G.is_directed():
+        s = 1.0 / (len(G) - 1.0)
+        degreecentrality = {n: d * s for n, d in G.out_degree()}
+        G = G.reverse()
+    else:
+        s = 1.0 / (len(G) - 1.0)
+        degreecentrality = {n: d * s for n, d in G.degree()}
+    path_length = nx.single_source_shortest_path_length 
+    nodes = G.nodes
+    closeness_centrality = {}
+    for n in nodes:
+        sp = dict(path_length(G, n))
+        totsp = sum(sp.values())
+        if totsp > 0.0 and len(G) > 1:
+            closeness_centrality[n] = (len(sp) - 1.0) / totsp
+            s = (len(sp) - 1.0) / (len(G) - 1)
+            closeness_centrality[n] *= s
+        else:
+            closeness_centrality[n] = 0.0
+    while len(seeds) < seed_size:
+        if len(seeds) == 0:
+            for node in range(1, novert + 1):
+                s_n_influnece[node] = 0
+                if node in outdeg:
+                    single_node = []
+                    single_node.append(node)
+                    s_n_influnece[node]=( s_n_influnece[node] + LTpropmodel(graph, single_node))/novert
+                    if not closeness_centrality[node]==0:
+                        s_n_influnece[node]=s_n_influnece[node]*SN_INFLUENCE_PER+(1/closeness_centrality[node])*CENTRALITY_PER+degreecentrality[node]*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))
+                    else:
+                        s_n_influnece[node]=s_n_influnece[node]*SN_INFLUENCE_PER+(0)*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))+degreecentrality[node]*CENTRALITY_PER
+            max_seed = max(s_n_influnece, key=s_n_influnece.get)
+            s_n_influnece.pop(max_seed)
+            seeds.append(max_seed)
+        else:
+            prev_best = max(s_n_influnece, key=s_n_influnece.get)
+            s_n_influnece[prev_best] = 0
+            new_seeds = seeds + [prev_best]
+            marginal_profit = LTpropmodel(graph, new_seeds) - LTpropmodel(graph, seeds)
+            s_n_influnece[prev_best] = s_n_influnece[prev_best] + marginal_profit
+            if not closeness_centrality[prev_best]==0:
+                s_n_influnece[prev_best]=s_n_influnece[prev_best]*SN_INFLUENCE_PER+(1/closeness_centrality[prev_best])*CENTRALITY_PER+degreecentrality[prev_best]*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))
+            else:
+                s_n_influnece[prev_best]=s_n_influnece[prev_best]*SN_INFLUENCE_PER+(0)*(1-(CENTRALITY_PER+SN_INFLUENCE_PER))+degreecentrality[prev_best]*CENTRALITY_PER
+            current_seed = max(s_n_influnece, key=s_n_influnece.get)
+            if current_seed == prev_best:
+                seeds.append(current_seed)
+                s_n_influnece.pop(current_seed)
+            else:
+                continue
+    return seeds
+
+def inffind(graph, novert, seed_size, outdeg, model): 
+    if model == "IC":
+        seeds = propic(graph, novert, seed_size, outdeg) 
+    else:
+        seeds = proplt(graph, novert, seed_size, outdeg) 
+    return seeds
+
+def calculate_average(graph, seeds, model): 
+    if model == "IC":
+        count = 0
+        total_influence = 0 
+        while count < 1000:
+            total_influence += ICpropmodel(graph, seeds) 
+            count += 1
+        IC_average = total_influence/count 
+        average_result = IC_average
+    else:
+        count = 0
+        total_influence = 0 
+        while count < 1000:
+            total_influence += LTpropmodel(graph, seeds) 
+            count += 1
+        LT_average = total_influence / count 
+        average_result = LT_average
+    return average_result
+
+def getseeds(G, novert, seed_size, outdeg, model): 
+    final_seeds = []
+    total_influence = 0
+    final_seeds = inffind(G, novert, seed_size, outdeg, model) 
+    total_influence = calculate_average(G, final_seeds, model)
+    print("Hence the seeds selected for highest influence are\n ", final_seeds)
+
+choice = int(input('1-graph from text file \n 2-random graph \n')) 
+if choice==1:
+    graph_file=raw_input('enter the name/directory of thefile: ') 
+    novert, noedge, graph, outdeg =read_data(graph_file) 
+#     print(novert)
+#     print(noedge)
+#     print(graph.items())
+    print(outdeg)
+    G = nx.DiGraph()
+    G.add_nodes_from(graph)
+    G.add_edges_from(((u, v, data)for u, nbrs in graph.items()for v, data in nbrs.items()))
+elif choice==2:
+    novert=int(input('enter the number of vertices for Erdos-Renghi graph: '))
+    prob=float(input('enter the probability for node establishment: '))
+    G=nx.fast_gnp_random_graph(novert, prob, seed=None, directed=True)
+    noedge=nx.number_of_edges(G)
+    for (u, v) in G.edges():
+        G.edges[u,v]['weight'] =random.random()
+    outdeg={}
+    for i in G.nodes():
+        outdeg[i]=G.out_degree(i)
+    print(noedge)
+seed_size=int(input('enter the no of seeds required: '))
+model=raw_input('Propagation models:\nIC - INDEPENDENT CASCADE\nLT - LINEAR THRESHOLD\nenter: ')
+start_time = time.time()
+getseeds(G, novert, seed_size, outdeg, model)
+print("execution time = ",time.time() - start_time,"s")  
+nx.draw_circular(G, node_color = 'bisque', with_labels = True)
+
+
+
+
+
+
+
+
+```
 
 # **6. Results and Discussion**
 
-Results for the random data set with number of vertices as 50 and node probability establishment as 0.7 using Independent cascade model.
-
-![](RackMultipart20210628-4-1yu6iem_html_6bba39dc0450fbb.png)
-
-Results for the random data set with number of vertices as 50 and node probability establishment as 0.7 using Linear threshold model.
-
-![](RackMultipart20210628-4-1yu6iem_html_9b8a486819b63e7d.png)
-
-Results for the random data set with number of vertices as 100 and node probability establishment as 0.3 using Independent cascade model.
-
-![](RackMultipart20210628-4-1yu6iem_html_3078df1adf79a96d.png)
-
-Results for the random data set with number of vertices as 100 and node probability establishment as 0.3 using Linear threshold model.
-
-![](RackMultipart20210628-4-1yu6iem_html_652300dd9be94944.png)
-
-Results for the random data set with number of vertices as 200 and node probability establishment as 0.2 using Independent cascade model.
-
-![](RackMultipart20210628-4-1yu6iem_html_cb8b28c15d4aa692.png)
-
-Results for the random data set with number of vertices as 200 and node probability establishment as 0.2 using Linear threshold model.
-
-![](RackMultipart20210628-4-1yu6iem_html_344a725a707a3bfe.png)
-
-Results for the random data set with number of vertices as 300 and node probability establishment as 0.2 using Independent cascade model.
-
-![](RackMultipart20210628-4-1yu6iem_html_c21e1498eedc2888.png)
-
-Results for the random data set with number of vertices as 300 and node probability establishment as 0.2 using Linear threshold model.
-
-![](RackMultipart20210628-4-1yu6iem_html_760f74d66944b4b4.png)
-
-Results for the random data set with number of vertices as 400 and node probability establishment as 0.2 using Independent cascade model.
-
-![](RackMultipart20210628-4-1yu6iem_html_6d52219525fedd5f.png)
-
-Results for the random data set with number of vertices as 400 and node probability establishment as 0.2 using Linear threshold model.
-
-![](RackMultipart20210628-4-1yu6iem_html_6f6dc9dc440a54cb.png)
-
-Results for the random data set with number of vertices as 500 and node probability establishment as 0.2 using Independent cascade model.
-
-![](RackMultipart20210628-4-1yu6iem_html_60b06e15f40b6bd6.png)
 
 **Execution timings:**
 
