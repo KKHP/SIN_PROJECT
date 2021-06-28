@@ -1,6 +1,0 @@
-1) understand report and algorithm 
-2) understand each and every functionality of the code 
-3) work on the python code and execute the code before CAT-1
-4) start working on the java script code and implement the code before review 2
-5) after review 2 try to make website for the project and tie up with java script 
-5) finish full documentation and show website and review 3 document 
