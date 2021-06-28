@@ -8,35 +8,6 @@ Social networks have attracted a lot of attention as novel information or advert
 
 Keywords: Influence Maximization (IM), Influence Propagation, Greedy Algorithms, CELF, Sub-modularity, Social Networks.
 
-# **Contents:**
-
-Acknowledgement
-
-[**Abstract:** 3](#_Toc71662439)
-
-[**1.**  **Introduction:** 3](#_Toc71662440)
-
-[**2.**  **Literature Survey:** 4](#_Toc71662441)
-
-[**3.**  **Overview of the Proposed System:** 7](#_Toc71662442)
-
-[**3.1.**  **Introduction:** 7](#_Toc71662443)
-
-[**3.2.**  **Architecture of Proposed System:** 7](#_Toc71662444)
-
-[**3.3.**  **Proposed System Model** 7](#_Toc71662445)
-
-[**4.**  **Proposed System Analysis and Design** 7](#_Toc71662446)
-
-[**5.**  **Implementation** 12](#_Toc71662447)
-
-[**6.**  **Results and Discussion** 12](#_Toc71662448)
-
-[**7.**  **Conclusion, Limitations and Scope for future Work** 18](#_Toc71662449)
-
-[**8.**  **References** 19](#_Toc71662450)
-
-[**Appendix** 19](#_Toc71662451)
 
 1.
 # **Introduction:**
