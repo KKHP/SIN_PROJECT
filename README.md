@@ -444,13 +444,4 @@ The above table and plot show that our proposed algorithm is efficient and less 
 
 In this paper, we proposed the efficient algorithm for solving the influence maximization problem. We have modified CELF algorithm and used centrality measure property to optimize the seed selection process to find the most influential nodes as seed set. Independent cascade and linear threshold propagation models were used. We have used the enhanced algorithm for different real-world datasets and obtained better results. Also, the execution time is reduced while maintaining the efficiency. So clearly this algorithm solves the problem of influence maximization. Our algorithm is likely to be the scalable solution to the influence maximization problem for largescale real-life social networks.
 
-# **8. References**
 
-1.
-J. Lee and C. Chung, &quot;A Query Approach for Influence Maximization on Specific Users in Social Networks,&quot; in IEEE Transactions on Knowledge and Data Engineering, vol. 27, no. 2, pp. 340-353, 1 Feb. 2015. DOI: 10.1109/TKDE.2014.2330833
-2. Shashank Sheshar Singh, Ajay Kumar, Kuldeep Singh, Bhaskar Biswas.&quot; LAPSO-IM: A learning-based influence maximization approach for social networks &quot;, Department of Computer Science and Engineering, Indian Institute of Technology (BHU), Varanasi, 221–005, India. DOI: https://doi.org/10.1016/j.asoc.2019.105554
-3. Huan Li, Ruisheng Zhang, Zhili Zhao, Yongna Yuan, &quot;An Efficient Influence Maximization Algorithm Based on Clique in Social Networks&quot;, IEEE, vol.7, pp. 141083 - 141093, 24 Sep. 2019. DOI: 10.1109/ACCESS.2019.2943412
-4. Xiaoheng Deng, Fang Long, Bo Li, Dejuan Cao, Yan Pan, &quot;An Influence Model Based on Heterogeneous Online Social Network for Influence Maximization&quot; in IEEE Transactions on Network Science and Engineering, vol. 7, no. 2, pp. 737-749, 3 June. 2019. DOI: 10.1109/TNSE.2019.2920371
-5. Naimisha Kolli, Balakrishnan Narayanaswamy.&quot; Influence Maximization From Cascade Information Traces in Complex Networks in the Absence of Network Structure &quot;, in IEEE Transactions on Computational Social Systems, vol. 6, no. 6, pp. 1147-1155, 19 Sep.2019. DOI: 10.1109/TCSS.2019.2939841
-6. Feng Lu, Weikang Zhang, Liwen Shao, Xunfei Jiang, Peng Xu, Hai Jin, &quot;Scalable influence maximization under independent cascade model&quot;, Elsevier Journal of Networks and Computer Applications, vol.86, pp. 15-23, 15 May. 2017. DOI: https://doi.org/10.1016/j.jnca.2016.10.020
-7. Matthew Richardson and Pedro Domingos. Mining knowledge-sharing sites for viral marketing. In Proceedings of the eighth ACM SIGKDD international conference on Knowledge discovery and data mining, pages 61–70. ACM, 2002.
