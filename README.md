@@ -1,3 +1,13 @@
+# TO RUN PROJECT
+```
+STEP1 -  DOWNLOAD ZIP FILE
+
+STEP2 -  EXTRACT ZIP FILE
+
+STEP3 -  download networkx using pip install networkx
+
+STEP4 -  Run main.py using any code editor
+```
 # MAXIMIZING THE INFLUENCE SPREAD IN SOCIAL MEDIA USING IMPROVISED CELF ALGORITHM AND CENTRALITY MEASURES
 
 
